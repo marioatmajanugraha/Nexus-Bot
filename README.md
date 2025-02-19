@@ -1,17 +1,17 @@
-🚀 **Nexus-Bot - Airdrop 888** 🔥
+# 🚀 **Nexus-Bot - Airdrop 888** 🔥
 Nexus-Bot adalah bot otomatis yang digunakan untuk melakukan Ping Nexus secara terus-menerus menggunakan WebSocket dengan opsi penggunaan Proxy untuk menjaga anonimitas dan keamanan.
 Script ini dirancang untuk Airdrop 888 dengan tampilan interaktif dan menarik.
 
-📌 **Fitur Utama**
-🔄 Kirim Ping Secara Terus-Menerus untuk setiap wallet.
-♻️ Reconnect Otomatis hingga 3 kali jika koneksi websocket terputus.
-🔌 Dukungan Proxy:
-http://, https:// menggunakan HttpsProxyAgent.
-socks5:// menggunakan SocksProxyAgent.
-🔑 Keamanan Wallet dengan tampilan singkat (0x...57Se).
-🎨 Tampilan Menarik menggunakan 
+## 📌 Fitur Utama  
+- 🔄 **Kirim Ping Secara Terus-Menerus** untuk setiap wallet.  
+- ♻️ **Reconnect Otomatis** hingga 3 kali jika koneksi websocket terputus.  
+- 🔌 **Dukungan Proxy**:  
+  - `http://`, `https://` menggunakan **HttpsProxyAgent**.  
+  - `socks5://` menggunakan **SocksProxyAgent**.  
+- 🔑 **Keamanan Wallet** dengan tampilan singkat (`0x...57Se`).  
+- 🎨 **Tampilan Menarik** 
 
-🔧 Instalasi
+##🔧 Instalasi
 1. **Clone repository:**
 ```sh
 git clone https://github.com/username/Nexus-Bot.git
@@ -35,7 +35,7 @@ http://user:pass@proxyaddress:port
 socks5://proxyaddress:port
 ```
 
-🚀 **Cara Menggunakan**
+## 🚀 **Cara Menggunakan**
 **Jalankan script:**
 ```sh
 node index.js
@@ -46,33 +46,33 @@ Ikuti prompt:
 Pilih penggunaan proxy (y/n).
 Script akan otomatis mengirim ping secara terus-menerus untuk setiap wallet.
 
-📌 Catatan
+## 📌 Catatan
 Pastikan accounts.json dan proxy.txt diisi dengan benar.
 Script akan melakukan reconnect otomatis hingga 3 kali jika koneksi websocket terputus.
 Pastikan Node.js versi terbaru sudah terpasang.
 
-📜 Lisensi
+## 📜 Lisensi
 MIT License. Lihat LICENSE untuk informasi lebih lanjut.
 
-📞 Kontak
+## 📞 Kontak
 📧 Email: teamproject888official@gmail.com
 📲 Telegram: @balveerxyz
 ⭐ Donasi
 Jika Anda merasa script ini bermanfaat, pertimbangkan untuk mendukung pengembangan lebih lanjut:
 ETH/USDT/BNB: 0x0098628619755e12Ed56E8b81A734b45339857De
 
-🤝 **Kontribusi**
+## 🤝 **Kontribusi**
 Fork repository ini.
 Buat branch fitur (git checkout -b feature/AmazingFeature).
 Commit perubahan (git commit -m 'Add some AmazingFeature').
 Push ke branch (git push origin feature/AmazingFeature).
 Buat Pull Request.
 
-⚠️ **Disclaimer**
+## ⚠️ **Disclaimer**
 Gunakan script ini dengan tanggung jawab penuh.
 Tidak disarankan untuk aktivitas ilegal atau yang melanggar TOS platform terkait.
 
-🎉 **Terima Kasih!**
+## 🎉 **Terima Kasih!**
 Nexus-Bot dikembangkan dengan ❤️ oleh @balveerxyz.
 Selamat menggunakan dan semoga sukses dengan **Airdrop 888!**
 

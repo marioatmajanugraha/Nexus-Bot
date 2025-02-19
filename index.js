@@ -12,7 +12,7 @@ const readlineSync = require('readline-sync');
 CFonts.say('Airdrop 888', {
   font: 'block',
   align: 'center',
-  colors: ['cyan'],
+  colors: ['magenta','cyan'],
 });
 console.log(chalk.cyan('🚀 Script coded by - @balveerxyz || Ping Nexus 🔥\n'));
 
@@ -31,7 +31,7 @@ try {
 }
 
 // Prompt Proxy Usage
-const useProxy = readlineSync.question('🔌 Mau menggunakan proxy? (y/n): ').toLowerCase();
+const useProxy = readlineSync.question('Mau menggunakan proxy? (y/n): ').toLowerCase();
 let proxies = [];
 if (useProxy === 'y') {
   try {
@@ -65,6 +65,7 @@ const pingWallet = (wallet) => {
   console.log(chalk.yellow(`\n🔔 Melakukan ping untuk wallet: ${walletShort}`));
   
   let reconnectAttempts = 0;
+  let hasJoinedChannel = false;
 
   const startWebSocket = () => {
     const wsOptions = useProxy === 'y' ? { agent: getRandomProxy() } : {};
@@ -74,21 +75,21 @@ const pingWallet = (wallet) => {
       console.log(chalk.green('✅ Terhubung ke websocket!'));
       reconnectAttempts = 0;
 
-      // Step 1: Handshake
       ws.send('40');
 
-      // Step 2: Join Channel
-      setTimeout(() => {
-        ws.send(`420["join_channel",{"channelId":"a75e1ea6-35c5-458b-973e-293f65620790","context":"dapp_connectToChannel","wallet":"${wallet}"}]`);
-      }, 1000);
+      if (!hasJoinedChannel) {
+        setTimeout(() => {
+          ws.send(`420["join_channel",{"channelId":"a75e1ea6-35c5-458b-973e-293f65620790","context":"dapp_connectToChannel","wallet":"${wallet}"}]`);
+          hasJoinedChannel = true;
+        }, 1000);
+      }
 
-      // Step 3: Kirim Ping secara terus-menerus
       const pingInterval = setInterval(() => {
         if (ws.readyState === WebSocket.OPEN) {
           ws.send(`42["ping",{"id":"a75e1ea6-35c5-458b-973e-293f65620790","clientType":"dapp","context":"on_channel_config","wallet":"${wallet}"}]`);
           console.log(chalk.blue('📡 Ping dikirim untuk wallet: ' + walletShort));
         }
-      }, 10000);
+      }, 2000);
 
       ws.on('message', (data) => {
         const message = data.toString();
@@ -96,12 +97,8 @@ const pingWallet = (wallet) => {
           console.log(chalk.magenta('📩 Session dimulai'));
         } else if (message.startsWith('40')) {
           console.log(chalk.magenta('📩 Channel bergabung'));
-        } else if (message.startsWith('42')) {
-          console.log(chalk.magenta('📩 Update channel'));
         } else if (message.startsWith('2')) {
           console.log(chalk.magenta('📩 Ping diterima'));
-        } else {
-          console.log(chalk.gray('📩 Pesan lainnya'));
         }
       });
 
@@ -126,6 +123,5 @@ const pingWallet = (wallet) => {
   startWebSocket();
 };
 
-// Start Ping for All Wallets
 console.log(chalk.green('\n🚀 Mulai Ping untuk Semua Wallet...'));
 wallets.forEach(wallet => pingWallet(wallet));

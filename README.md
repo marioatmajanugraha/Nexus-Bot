@@ -14,7 +14,7 @@ Script ini dirancang untuk Airdrop 888 dengan tampilan interaktif dan menarik.
 ##🔧 Instalasi
 1. **Clone repository:**
 ```sh
-git clone https://github.com/username/Nexus-Bot.git
+git clone https://github.com/marioatmajanugraha/Nexus-Bot.git
 cd Nexus-Bot
 ```
 2. **Install dependencies:**

@@ -55,7 +55,7 @@ Pastikan Node.js versi terbaru sudah terpasang.
 MIT License. Lihat LICENSE untuk informasi lebih lanjut.
 
 📞 Kontak
-📧 Email: contact@example.com
+📧 Email: teamproject888official@gmail.com
 📲 Telegram: @balveerxyz
 ⭐ Donasi
 Jika Anda merasa script ini bermanfaat, pertimbangkan untuk mendukung pengembangan lebih lanjut:

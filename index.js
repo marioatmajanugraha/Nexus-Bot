@@ -46,15 +46,18 @@ const getRandomProxy = () => {
   return null;
 };
 
-// Fungsi Ping dengan Retry
+// Fungsi Ping dengan Retry Tanpa Henti
 const pingWallet = async (wallet) => {
   console.log(chalk.yellow(`\n🔔 Melakukan ping untuk wallet: ${wallet}`));
 
-  const startWebSocket = async () => {
-    const wsOptions = useProxy === 'y' ? { agent: getRandomProxy() } : {};
+  const startWebSocket = async (retryCount = 0) => {
+    const wsOptions = useProxy === 'y' ? { agent: getRandomProxy(), handshakeTimeout: 10000 } : {};
     const ws = new WebSocket('wss://metamask-sdk.api.cx.metamask.io/socket.io/?EIO=4&transport=websocket', wsOptions);
 
+    let isConnected = false;
+
     ws.on('open', () => {
+      isConnected = true;
       console.log(chalk.green('✅ Terhubung ke websocket!'));
 
       // Kirim Handshake
@@ -78,12 +81,9 @@ const pingWallet = async (wallet) => {
       ws.on('close', () => {
         clearInterval(pingInterval);
         console.log(chalk.red(`🔴 Koneksi websocket ditutup untuk wallet: ${wallet}`));
-
-        // Coba ulang dengan proxy baru jika menggunakan proxy
-        if (useProxy === 'y') {
-          console.log(chalk.cyan('🔄 Mencoba ulang dengan proxy baru...'));
-          startWebSocket();
-        }
+        retryCount++;
+        console.log(chalk.cyan(`🔄 Mencoba ulang dengan proxy baru (Percobaan ke-${retryCount})...`));
+        setTimeout(() => startWebSocket(retryCount), 2000);
       });
 
       // Handle Message
@@ -92,14 +92,31 @@ const pingWallet = async (wallet) => {
         if (message.startsWith('0')) console.log(chalk.magenta('📩 Session dimulai'));
         else if (message.startsWith('40')) console.log(chalk.magenta('📩 Channel bergabung'));
         else if (message.startsWith('2')) console.log(chalk.magenta('📩 Ping diterima'));
-        // Pesan lainnya diabaikan
       });
+    });
 
-      // Handle Error
-      ws.on('error', (err) => {
-        console.log(chalk.red(`❌ Error websocket: ${err.message}`));
-        ws.close();
-      });
+    // Handle Error Sebelum Koneksi Selesai
+    ws.on('error', (err) => {
+      console.log(chalk.red(`❌ Error websocket: ${err.message}`));
+      if (!isConnected) {
+        retryCount++;
+        console.log(chalk.cyan(`🔄 Koneksi gagal, mencoba ulang dengan proxy baru (Percobaan ke-${retryCount})...`));
+        setTimeout(() => startWebSocket(retryCount), 2000);
+      }
+      ws.terminate();
+    });
+
+    // Handle Koneksi Tidak Terduga
+    ws.on('unexpected-response', () => {
+      console.log(chalk.red('❌ Unexpected response, mencoba ulang...'));
+      ws.terminate();
+      setTimeout(() => startWebSocket(retryCount + 1), 2000);
+    });
+
+    ws.on('timeout', () => {
+      console.log(chalk.red('⏰ Timeout, mencoba ulang...'));
+      ws.terminate();
+      setTimeout(() => startWebSocket(retryCount + 1), 2000);
     });
   };
 

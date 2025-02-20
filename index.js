@@ -3,7 +3,7 @@ const chalk = require('chalk');
 const CFonts = require('cfonts');
 const fs = require('fs');
 const { HttpsProxyAgent } = require('https-proxy-agent');
-const SocksProxyAgent = require('socks-proxy-agent');
+const { SocksProxyAgent } = require('socks-proxy-agent');
 const readlineSync = require('readline-sync');
 
 // Tampilkan Banner
@@ -59,17 +59,12 @@ const pingWallet = async (wallet) => {
     ws.on('open', () => {
       isConnected = true;
       console.log(chalk.green('✅ Terhubung ke websocket!'));
-
-      // Kirim Handshake
       ws.send('40');
-
-      // Gabung Channel
       setTimeout(() => {
         ws.send(`420["join_channel",{"channelId":"a75e1ea6-35c5-458b-973e-293f65620790","context":"dapp_connectToChannel","wallet":"${wallet}"}]`);
         console.log(chalk.cyan('🔗 Bergabung dengan channel...'));
       }, 1000);
 
-      // Kirim Ping Setiap 10 Detik
       const pingInterval = setInterval(() => {
         if (ws.readyState === WebSocket.OPEN) {
           ws.send(`42["ping",{"id":"a75e1ea6-35c5-458b-973e-293f65620790","clientType":"dapp","context":"on_channel_config","wallet":"${wallet}"}]`);
@@ -77,7 +72,6 @@ const pingWallet = async (wallet) => {
         }
       }, 10000);
 
-      // Handle Close
       ws.on('close', () => {
         clearInterval(pingInterval);
         console.log(chalk.red(`🔴 Koneksi websocket ditutup untuk wallet: ${wallet}`));
@@ -86,7 +80,6 @@ const pingWallet = async (wallet) => {
         setTimeout(() => startWebSocket(retryCount), 2000);
       });
 
-      // Handle Message
       ws.on('message', (data) => {
         const message = data.toString();
         if (message.startsWith('0')) console.log(chalk.magenta('📩 Session dimulai'));
@@ -95,7 +88,6 @@ const pingWallet = async (wallet) => {
       });
     });
 
-    // Handle Error Sebelum Koneksi Selesai
     ws.on('error', (err) => {
       console.log(chalk.red(`❌ Error websocket: ${err.message}`));
       if (!isConnected) {
@@ -105,24 +97,10 @@ const pingWallet = async (wallet) => {
       }
       ws.terminate();
     });
-
-    // Handle Koneksi Tidak Terduga
-    ws.on('unexpected-response', () => {
-      console.log(chalk.red('❌ Unexpected response, mencoba ulang...'));
-      ws.terminate();
-      setTimeout(() => startWebSocket(retryCount + 1), 2000);
-    });
-
-    ws.on('timeout', () => {
-      console.log(chalk.red('⏰ Timeout, mencoba ulang...'));
-      ws.terminate();
-      setTimeout(() => startWebSocket(retryCount + 1), 2000);
-    });
   };
 
   startWebSocket();
 };
 
-// Jalankan Ping untuk Semua Wallet
 console.log(chalk.green('\n🚀 Mulai Ping untuk Semua Wallet...'));
 wallets.forEach(wallet => pingWallet(wallet));

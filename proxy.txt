@@ -1,0 +1,10 @@
+# Sample proxies - Replace with your actual proxies from webshare
+# Format: protocol://username:password@host:port
+http://user123:pass456@123.45.67.89:8080
+https://user123:pass456@123.45.67.89:8080
+socks5://user123:pass456@123.45.67.89:1080
+
+# Format without authentication
+# http://host:port
+# https://host:port
+# socks5://host:port

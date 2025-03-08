@@ -1,4 +1,5 @@
 const WebSocket = require('ws');
+const axios = require('axios');
 const chalk = require('chalk');
 const CFonts = require('cfonts');
 const fs = require('fs');
@@ -6,101 +7,187 @@ const { HttpsProxyAgent } = require('https-proxy-agent');
 const { SocksProxyAgent } = require('socks-proxy-agent');
 const readlineSync = require('readline-sync');
 
-// Tampilkan Banner
-CFonts.say('Airdrop 888', {
+// Display Banner
+CFonts.say('Gradient Network', {
   font: 'block',
   align: 'center',
-  colors: ['magenta', 'cyan'],
+  colors: ['cyan', 'magenta'],
 });
-console.log(chalk.cyan('🚀 Script coded by - @balveerxyz || Ping Nexus 🔥\n'));
+console.log(chalk.cyan('🚀 Gradient Network Airdrop Bot - Coded by @balveerxyz 🔥\n'));
 
-// Baca Wallets
+// Read Wallets
 let wallets;
 try {
   wallets = JSON.parse(fs.readFileSync('accounts.json', 'utf-8'));
   if (!Array.isArray(wallets) || wallets.length === 0) throw new Error();
 } catch (err) {
-  console.log(chalk.red('❌ Gagal membaca accounts.json!'));
+  console.log(chalk.red('❌ Failed to read accounts.json or no wallets found!'));
+  console.log(chalk.yellow('ℹ️ Please add your wallet addresses to accounts.json in this format:'));
+  console.log(chalk.yellow('[\n  "0xWalletAddress1",\n  "0xWalletAddress2"\n]'));
   process.exit(1);
 }
 
-// Prompt Proxy
-const useProxy = readlineSync.question('Mau menggunakan proxy? (y/n): ').toLowerCase();
+// Prompt for Proxy
+const useProxy = readlineSync.question('Do you want to use proxies? (y/n): ').toLowerCase();
 let proxies = [];
 if (useProxy === 'y') {
   try {
     proxies = fs.readFileSync('proxy.txt', 'utf-8').split('\n').map(p => p.trim()).filter(Boolean);
     if (proxies.length === 0) throw new Error();
   } catch (err) {
-    console.log(chalk.red('❌ Gagal membaca proxy.txt atau proxy kosong!'));
-    process.exit(1);
+    console.log(chalk.red('❌ Failed to read proxy.txt or no proxies found!'));
+    console.log(chalk.yellow('ℹ️ Continuing without proxies...'));
   }
 }
 
-// Fungsi Ambil Proxy Acak
+// Get Random Proxy
 const getRandomProxy = () => {
+  if (proxies.length === 0) return null;
+  
   const proxy = proxies[Math.floor(Math.random() * proxies.length)];
   if (proxy.startsWith('http://') || proxy.startsWith('https://')) return new HttpsProxyAgent(proxy);
   if (proxy.startsWith('socks5://')) return new SocksProxyAgent(proxy);
-  console.log(chalk.red(`⚠️ Format proxy tidak valid: ${proxy}`));
+  console.log(chalk.red(`⚠️ Invalid proxy format: ${proxy}`));
   return null;
 };
 
-// Fungsi Ping dengan Retry Tanpa Henti
-const pingWallet = async (wallet) => {
-  console.log(chalk.yellow(`\n🔔 Melakukan ping untuk wallet: ${wallet}`));
-
-  const startWebSocket = async (retryCount = 0) => {
-    const wsOptions = useProxy === 'y' ? { agent: getRandomProxy(), handshakeTimeout: 10000 } : {};
-    const ws = new WebSocket('wss://metamask-sdk.api.cx.metamask.io/socket.io/?EIO=4&transport=websocket', wsOptions);
-
-    let isConnected = false;
-
-    ws.on('open', () => {
-      isConnected = true;
-      console.log(chalk.green('✅ Terhubung ke websocket!'));
-      ws.send('40');
-      setTimeout(() => {
-        ws.send(`420["join_channel",{"channelId":"a75e1ea6-35c5-458b-973e-293f65620790","context":"dapp_connectToChannel","wallet":"${wallet}"}]`);
-        console.log(chalk.cyan('🔗 Bergabung dengan channel...'));
-      }, 1000);
-
-      const pingInterval = setInterval(() => {
-        if (ws.readyState === WebSocket.OPEN) {
-          ws.send(`42["ping",{"id":"a75e1ea6-35c5-458b-973e-293f65620790","clientType":"dapp","context":"on_channel_config","wallet":"${wallet}"}]`);
-          console.log(chalk.blue(`📡 Ping dikirim untuk wallet: ${wallet}`));
-        }
-      }, 10000);
-
-      ws.on('close', () => {
-        clearInterval(pingInterval);
-        console.log(chalk.red(`🔴 Koneksi websocket ditutup untuk wallet: ${wallet}`));
-        retryCount++;
-        console.log(chalk.cyan(`🔄 Mencoba ulang dengan proxy baru (Percobaan ke-${retryCount})...`));
-        setTimeout(() => startWebSocket(retryCount), 2000);
-      });
-
-      ws.on('message', (data) => {
-        const message = data.toString();
-        if (message.startsWith('0')) console.log(chalk.magenta('📩 Session dimulai'));
-        else if (message.startsWith('40')) console.log(chalk.magenta('📩 Channel bergabung'));
-        else if (message.startsWith('2')) console.log(chalk.magenta('📩 Ping diterima'));
-      });
-    });
-
-    ws.on('error', (err) => {
-      console.log(chalk.red(`❌ Error websocket: ${err.message}`));
-      if (!isConnected) {
-        retryCount++;
-        console.log(chalk.cyan(`🔄 Koneksi gagal, mencoba ulang dengan proxy baru (Percobaan ke-${retryCount})...`));
-        setTimeout(() => startWebSocket(retryCount), 2000);
-      }
-      ws.terminate();
-    });
-  };
-
-  startWebSocket();
+// Format wallet address for display (privacy)
+const formatWallet = (wallet) => {
+  if (wallet.length < 10) return wallet;
+  return `${wallet.substring(0, 6)}...${wallet.substring(wallet.length - 4)}`;
 };
 
-console.log(chalk.green('\n🚀 Mulai Ping untuk Semua Wallet...'));
-wallets.forEach(wallet => pingWallet(wallet));
+// Gradient Network Airdrop Process
+const processAirdrop = async (wallet, index) => {
+  console.log(chalk.yellow(`\n[${index + 1}/${wallets.length}] 🔔 Processing airdrop for wallet: ${formatWallet(wallet)}`));
+  
+  // Setup axios with proxy if needed
+  const axiosConfig = {};
+  if (useProxy === 'y') {
+    const proxyAgent = getRandomProxy();
+    if (proxyAgent) {
+      axiosConfig.httpsAgent = proxyAgent;
+      console.log(chalk.blue('🔒 Using proxy for API requests'));
+    }
+  }
+
+  try {
+    // Step 1: Register wallet with Gradient Network
+    console.log(chalk.blue('🔄 Registering wallet with Gradient Network...'));
+    const registerResponse = await axios.post('https://api.gradient.network/v1/register', {
+      wallet_address: wallet
+    }, axiosConfig);
+    
+    if (registerResponse.data.success) {
+      console.log(chalk.green('✅ Wallet registered successfully!'));
+      
+      // Step 2: Connect to Gradient Network WebSocket
+      console.log(chalk.blue('🔄 Connecting to Gradient Network WebSocket...'));
+      connectToWebSocket(wallet, axiosConfig.httpsAgent);
+      
+      // Step 3: Claim airdrop tokens
+      console.log(chalk.blue('🔄 Claiming airdrop tokens...'));
+      const claimResponse = await axios.post('https://api.gradient.network/v1/claim', {
+        wallet_address: wallet
+      }, axiosConfig);
+      
+      if (claimResponse.data.success) {
+        console.log(chalk.green('✅ Airdrop tokens claimed successfully!'));
+        console.log(chalk.green(`💰 Tokens received: ${claimResponse.data.amount || 'Unknown amount'}`));
+      } else {
+        console.log(chalk.red(`❌ Failed to claim airdrop tokens: ${claimResponse.data.message || 'Unknown error'}`));
+      }
+    } else {
+      console.log(chalk.red(`❌ Failed to register wallet: ${registerResponse.data.message || 'Unknown error'}`));
+    }
+  } catch (error) {
+    console.log(chalk.red(`❌ Error processing airdrop: ${error.message}`));
+    if (error.response) {
+      console.log(chalk.red(`📝 Server response: ${JSON.stringify(error.response.data)}`));
+    }
+  }
+  
+  // Add delay between wallets to avoid rate limiting
+  const delay = Math.floor(Math.random() * 5000) + 3000; // 3-8 seconds
+  console.log(chalk.blue(`⏳ Waiting ${delay/1000} seconds before processing next wallet...`));
+  await new Promise(resolve => setTimeout(resolve, delay));
+};
+
+// Connect to Gradient Network WebSocket
+const connectToWebSocket = (wallet, proxyAgent = null) => {
+  const wsOptions = proxyAgent ? { agent: proxyAgent, handshakeTimeout: 10000 } : {};
+  const ws = new WebSocket('wss://ws.gradient.network/socket', wsOptions);
+  
+  let reconnectAttempts = 0;
+  const maxReconnectAttempts = 3;
+  
+  ws.on('open', () => {
+    console.log(chalk.green('✅ Connected to Gradient Network WebSocket!'));
+    
+    // Send authentication message
+    const authMessage = JSON.stringify({
+      type: 'auth',
+      wallet: wallet
+    });
+    ws.send(authMessage);
+    
+    // Setup ping interval
+    const pingInterval = setInterval(() => {
+      if (ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({ type: 'ping' }));
+        console.log(chalk.blue(`📡 Ping sent for wallet: ${formatWallet(wallet)}`));
+      }
+    }, 30000); // Every 30 seconds
+    
+    ws.on('close', () => {
+      clearInterval(pingInterval);
+      console.log(chalk.red(`🔴 WebSocket connection closed for wallet: ${formatWallet(wallet)}`));
+      
+      if (reconnectAttempts < maxReconnectAttempts) {
+        reconnectAttempts++;
+        const delay = reconnectAttempts * 2000; // Exponential backoff
+        console.log(chalk.yellow(`🔄 Attempting to reconnect (${reconnectAttempts}/${maxReconnectAttempts}) in ${delay/1000} seconds...`));
+        setTimeout(() => connectToWebSocket(wallet, proxyAgent), delay);
+      } else {
+        console.log(chalk.red(`❌ Maximum reconnect attempts reached for wallet: ${formatWallet(wallet)}`));
+      }
+    });
+    
+    ws.on('message', (data) => {
+      try {
+        const message = JSON.parse(data.toString());
+        console.log(chalk.magenta(`📩 Received message: ${message.type || 'Unknown type'}`));
+        
+        if (message.type === 'auth_success') {
+          console.log(chalk.green('✅ Authentication successful!'));
+        } else if (message.type === 'airdrop_eligible') {
+          console.log(chalk.green('🎉 Wallet is eligible for airdrop!'));
+        } else if (message.type === 'airdrop_claimed') {
+          console.log(chalk.green(`🎁 Airdrop claimed! Amount: ${message.amount || 'Unknown'}`));
+        }
+      } catch (error) {
+        console.log(chalk.yellow(`⚠️ Could not parse message: ${error.message}`));
+      }
+    });
+  });
+  
+  ws.on('error', (error) => {
+    console.log(chalk.red(`❌ WebSocket error: ${error.message}`));
+    ws.terminate();
+  });
+};
+
+// Process all wallets
+const processAllWallets = async () => {
+  console.log(chalk.green(`\n🚀 Starting Gradient Network Airdrop process for ${wallets.length} wallets...\n`));
+  
+  for (let i = 0; i < wallets.length; i++) {
+    await processAirdrop(wallets[i], i);
+  }
+  
+  console.log(chalk.green('\n✅ All wallets processed!'));
+  console.log(chalk.cyan('Thank you for using Gradient Network Airdrop Bot!'));
+};
+
+// Start the process
+processAllWallets();

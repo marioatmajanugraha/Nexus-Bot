@@ -1,82 +1,94 @@
-# 🚀 **Nexus-Bot - Airdrop 888** 🔥
-Nexus-Bot adalah bot otomatis yang digunakan untuk melakukan Ping Nexus secara terus-menerus menggunakan WebSocket dengan opsi penggunaan Proxy untuk menjaga anonimitas dan keamanan.
-Script ini dirancang untuk Airdrop 888 dengan tampilan interaktif dan menarik.
+# 🚀 **Gradient Network Airdrop Bot** 🔥
 
-## 📌 Fitur Utama  
-- 🔄 **Kirim Ping Secara Terus-Menerus** untuk setiap wallet.  
-- ♻️ **Reconnect Otomatis** hingga 3 kali jika koneksi websocket terputus.  
-- 🔌 **Dukungan Proxy**:  
-  - `http://`, `https://` menggunakan **HttpsProxyAgent**.  
-  - `socks5://` menggunakan **SocksProxyAgent**.  
-- 🔑 **Keamanan Wallet** dengan tampilan singkat (`0x...57Se`).  
-- 🎨 **Tampilan Menarik** 
+An automated bot designed to interact with Gradient Network for airdrop participation. This script handles wallet registration, WebSocket connections, and airdrop token claiming with an attractive interactive display.
 
-##🔧 Instalasi
+## 📌 Key Features  
+- 🔄 **Automatic Wallet Registration** with Gradient Network.
+- 🌐 **WebSocket Connection** for real-time updates.
+- 🎁 **Airdrop Token Claiming** for each wallet.
+- ♻️ **Automatic Reconnection** up to 3 times if WebSocket connection is lost.
+- 🔌 **Proxy Support**:  
+  - `http://`, `https://` using **HttpsProxyAgent**.  
+  - `socks5://` using **SocksProxyAgent**.  
+- 🔑 **Wallet Privacy** with shortened display format (`0x1234...5678`).
+- 🎨 **Attractive Display** with color-coded status messages.
+
+## 🔧 Installation
+
 1. **Clone repository:**
 ```sh
 git clone https://github.com/marioatmajanugraha/Nexus-Bot.git
 cd Nexus-Bot
 ```
+
 2. **Install dependencies:**
 ```sh
-npm install axios ws chalk cfonts https-proxy-agent socks-proxy-agent readline-sync
-```
-**Persiapkan file konfigurasi:**
-accounts.json: Berisi daftar wallet dalam format array
-```sh
-[
-  "0xWalletAddress1",
-  "0xWalletAddress2"
-]
-```
-proxy.txt: Berisi daftar proxy dengan format
-```sh
-http://user:pass@proxyaddress:port
-socks5://proxyaddress:port
+npm install
 ```
 
-## 🚀 **Cara Menggunakan**
-**Jalankan script:**
+3. **Prepare configuration files:**
+
+   - **accounts.json**: Contains list of wallet addresses in array format
+   ```json
+   [
+     "0xYourWalletAddress1",
+     "0xYourWalletAddress2"
+   ]
+   ```
+
+   - **proxy.txt** (optional): Contains list of proxies in the format
+   ```
+   http://username:password@proxyhost:port
+   https://username:password@proxyhost:port
+   socks5://proxyhost:port
+   ```
+
+## 🚀 **Usage**
+
+**Run the script:**
 ```sh
 node index.js
 ```
 
-Ikuti prompt:
+Follow the prompts:
+1. Choose whether to use proxies (y/n).
+2. The script will automatically process each wallet:
+   - Register the wallet with Gradient Network
+   - Connect to WebSocket for real-time updates
+   - Claim airdrop tokens
+   - Wait a random delay before processing the next wallet
 
-Pilih penggunaan proxy (y/n).
-Script akan otomatis mengirim ping secara terus-menerus untuk setiap wallet.
+## 📌 Notes
+- Ensure your `accounts.json` and `proxy.txt` (if using proxies) are properly formatted.
+- The script includes random delays between wallet processing to avoid rate limiting.
+- WebSocket connections will automatically attempt to reconnect up to 3 times if disconnected.
+- Make sure you have the latest version of Node.js installed.
 
-## 📌 Catatan
-Pastikan accounts.json dan proxy.txt diisi dengan benar.
-Script akan melakukan reconnect otomatis hingga 3 kali jika koneksi websocket terputus.
-Pastikan Node.js versi terbaru sudah terpasang.
+## 📜 License
+MIT License. See LICENSE for more information.
 
-## 📜 Lisensi
-MIT License. Lihat LICENSE untuk informasi lebih lanjut.
-
-## 📞 Kontak
-📧 Email: teamproject888official@gmail.com
+## 📞 Contact
+📧 Email: teamproject888official@gmail.com  
 📲 Telegram: @balveerxyz
-⭐ Donasi
-Jika Anda merasa script ini bermanfaat, pertimbangkan untuk mendukung pengembangan lebih lanjut:
+
+⭐ Donations  
+If you find this script useful, consider supporting further development:  
 ETH/USDT/BNB: 0x0098628619755e12Ed56E8b81A734b45339857De
 
-## 🤝 **Kontribusi**
-Fork repository ini.
-Buat branch fitur (git checkout -b feature/AmazingFeature).
-Commit perubahan (git commit -m 'Add some AmazingFeature').
-Push ke branch (git push origin feature/AmazingFeature).
-Buat Pull Request.
+## 🤝 **Contributions**
+1. Fork this repository.
+2. Create a feature branch (`git checkout -b feature/AmazingFeature`).
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`).
+4. Push to the branch (`git push origin feature/AmazingFeature`).
+5. Create a Pull Request.
 
 ## ⚠️ **Disclaimer**
-Gunakan script ini dengan tanggung jawab penuh.
-Tidak disarankan untuk aktivitas ilegal atau yang melanggar TOS platform terkait.
+Use this script responsibly.
+Not recommended for illegal activities or those that violate the Terms of Service of related platforms.
 
-## 🎉 **Terima Kasih!**
-Nexus-Bot dikembangkan dengan ❤️ oleh @balveerxyz.
-Selamat menggunakan dan semoga sukses dengan **Airdrop 888!**
-
-
+## 🎉 **Thank You!**
+Gradient Network Airdrop Bot is developed with ❤️ by @balveerxyz.
+Good luck with your Gradient Network Airdrop!
 
 
 

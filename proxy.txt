@@ -1,0 +1,3 @@
+http://username:password@proxyhost:port
+https://username:password@proxyhost:port
+socks5://proxyhost:port

@@ -1,82 +1,94 @@
-# 🚀 **Nexus-Bot - Airdrop 888** 🔥
-Nexus-Bot adalah bot otomatis yang digunakan untuk melakukan Ping Nexus secara terus-menerus menggunakan WebSocket dengan opsi penggunaan Proxy untuk menjaga anonimitas dan keamanan.
-Script ini dirancang untuk Airdrop 888 dengan tampilan interaktif dan menarik.
+# Nexus Bot - MetaMask SDK Ping Tool
 
-## 📌 Fitur Utama  
-- 🔄 **Kirim Ping Secara Terus-Menerus** untuk setiap wallet.  
-- ♻️ **Reconnect Otomatis** hingga 3 kali jika koneksi websocket terputus.  
-- 🔌 **Dukungan Proxy**:  
-  - `http://`, `https://` menggunakan **HttpsProxyAgent**.  
-  - `socks5://` menggunakan **SocksProxyAgent**.  
-- 🔑 **Keamanan Wallet** dengan tampilan singkat (`0x...57Se`).  
-- 🎨 **Tampilan Menarik** 
+A Node.js application for pinging the MetaMask SDK API to maintain wallet connections.
 
-##🔧 Instalasi
-1. **Clone repository:**
-```sh
-git clone https://github.com/marioatmajanugraha/Nexus-Bot.git
-cd Nexus-Bot
-```
-2. **Install dependencies:**
-```sh
-npm install axios ws chalk cfonts https-proxy-agent socks-proxy-agent readline-sync
-```
-**Persiapkan file konfigurasi:**
-accounts.json: Berisi daftar wallet dalam format array
-```sh
+## Features
+
+- Automatically pings MetaMask SDK API for multiple wallet addresses
+- Supports HTTP, HTTPS, and SOCKS5 proxies
+- Intelligent proxy rotation and fallback mechanisms
+- Detailed logging and error handling
+
+## Installation
+
+1. Clone this repository:
+   ```
+   git clone https://github.com/yourusername/nexus-bot.git
+   cd nexus-bot
+   ```
+
+2. Install dependencies:
+   ```
+   npm install
+   ```
+
+## Configuration
+
+### Wallet Addresses
+
+Edit the `accounts.json` file to include your wallet addresses:
+
+```json
 [
-  "0xWalletAddress1",
-  "0xWalletAddress2"
+    "0x1234567890123456789012345678901234567890",
+    "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd"
 ]
 ```
-proxy.txt: Berisi daftar proxy dengan format
-```sh
-http://user:pass@proxyaddress:port
-socks5://proxyaddress:port
+
+### Proxy Configuration (Recommended)
+
+For best results, use proxies from webshare.io or another reliable proxy provider.
+
+Edit the `proxy.txt` file to include your proxies, one per line, in the following formats:
+
+```
+# With authentication
+http://username:password@host:port
+https://username:password@host:port
+socks5://username:password@host:port
+
+# Without authentication
+http://host:port
+https://host:port
+socks5://host:port
 ```
 
-## 🚀 **Cara Menggunakan**
-**Jalankan script:**
-```sh
+## Usage
+
+Run the application:
+
+```
 node index.js
 ```
 
-Ikuti prompt:
+The application will ask if you want to use proxies. For best results and to avoid errors, it's recommended to use proxies.
 
-Pilih penggunaan proxy (y/n).
-Script akan otomatis mengirim ping secara terus-menerus untuk setiap wallet.
+## Troubleshooting
 
-## 📌 Catatan
-Pastikan accounts.json dan proxy.txt diisi dengan benar.
-Script akan melakukan reconnect otomatis hingga 3 kali jika koneksi websocket terputus.
-Pastikan Node.js versi terbaru sudah terpasang.
+### Common Errors
 
-## 📜 Lisensi
-MIT License. Lihat LICENSE untuk informasi lebih lanjut.
+1. **Connection Errors**:
+   - If you see frequent connection errors, try using different proxies
+   - Ensure your proxy format is correct
+   - Try running without proxies to see if the issue persists
 
-## 📞 Kontak
-📧 Email: teamproject888official@gmail.com
-📲 Telegram: @balveerxyz
-⭐ Donasi
-Jika Anda merasa script ini bermanfaat, pertimbangkan untuk mendukung pengembangan lebih lanjut:
-ETH/USDT/BNB: 0x0098628619755e12Ed56E8b81A734b45339857De
+2. **Empty Proxy File**:
+   - If your proxy.txt file is empty, the application will warn you
+   - You can continue without proxies or add valid proxies to the file
 
-## 🤝 **Kontribusi**
-Fork repository ini.
-Buat branch fitur (git checkout -b feature/AmazingFeature).
-Commit perubahan (git commit -m 'Add some AmazingFeature').
-Push ke branch (git push origin feature/AmazingFeature).
-Buat Pull Request.
+3. **Invalid Wallet Addresses**:
+   - Ensure your wallet addresses in accounts.json are valid Ethereum addresses
+   - Each address should be a string in the array
 
-## ⚠️ **Disclaimer**
-Gunakan script ini dengan tanggung jawab penuh.
-Tidak disarankan untuk aktivitas ilegal atau yang melanggar TOS platform terkait.
+### Best Practices
 
-## 🎉 **Terima Kasih!**
-Nexus-Bot dikembangkan dengan ❤️ oleh @balveerxyz.
-Selamat menggunakan dan semoga sukses dengan **Airdrop 888!**
+- Use high-quality proxies from webshare.io for best results
+- Rotate proxies regularly to avoid rate limiting
+- Keep the application running to maintain consistent pings
 
+## License
 
+ISC License
 
 
 

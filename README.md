@@ -90,7 +90,12 @@ The application will ask if you want to use proxies. For best results and to avo
 
 ISC License
 
+---
 
+## 📞 Kontak
+Jika ada pertanyaan, hubungi: [@balveerxyz](https://t.me/balveerxyz)
+
+Join channel Telegram: [Airdrop 888](https://t.me/airdroplocked)
 
 
 
